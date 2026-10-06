@@ -30,7 +30,7 @@ Le `docker-compose.yml` importe automatiquement le realm `mcp-asterisk` au déma
 - URL : http://localhost:8090
 - Login : `admin` / `admin`
 
-## Créer un nouvel utilisateur
+## Créer un nouvel utilisateur ou modifier le mot de passe des utilisateurs existant
 
 1. Ouvrez http://localhost:8090 → **Administration Console**
 2. Sélectionnez le realm **`mcp-asterisk`**
@@ -41,6 +41,11 @@ Le `docker-compose.yml` importe automatiquement le realm `mcp-asterisk` au déma
    - **Temporary** : **OFF** ⚠️ (sinon le login échouera)
 6. Onglet **Role mapping** → **Assign role** → cocher le rôle
 7. **Save**
+<img width="554" height="184" alt="image" src="https://github.com/user-attachments/assets/5548502a-f14b-42e1-b527-28e04f988abe" />
+
+Désactiver toutes ses options
+<img width="554" height="228" alt="image" src="https://github.com/user-attachments/assets/5c0397e4-55d0-4ed0-93cf-c5bd51a772b6" />
+
 
 ## Récupérer un token JWT
 
