@@ -142,11 +142,4 @@ docker compose up -d
 │  └────────────────────┘                  │
 └──────────────────────────────────────────┘
 ```
-
-## 📄 Licence
-
-MIT — voir [LICENSE](LICENSE).
-
-## 👥 Auteurs
-
-Groupe 1 — Projet MCP Asterisk Supervisor
+et MCP Asterisk Supervisor
