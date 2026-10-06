@@ -15,7 +15,7 @@ schemas/*.json
 *.wav
 *.raw
 
-# Modèles (trop volumineux pour Git)
+# Modèles (trop volumineux)
 models/*.onnx
 models/*.onnx.json
 
