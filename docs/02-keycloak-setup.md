@@ -44,6 +44,8 @@ Le `docker-compose.yml` importe automatiquement le realm `mcp-asterisk` au déma
 <img width="554" height="184" alt="image" src="https://github.com/user-attachments/assets/5548502a-f14b-42e1-b527-28e04f988abe" />
 
 Désactiver toutes ses options
+Vider les Required Actions
+
 <img width="554" height="228" alt="image" src="https://github.com/user-attachments/assets/5c0397e4-55d0-4ed0-93cf-c5bd51a772b6" />
 
 
