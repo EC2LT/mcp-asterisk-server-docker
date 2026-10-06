@@ -1,0 +1,40 @@
+# Dockerfile.mcp-server
+FROM python:3.11-slim
+
+# Métadonnées
+LABEL maintainer="Groupe 1 - Projet MCP Asterisk"
+LABEL description="Serveur MCP pour la supervision Asterisk"
+
+# Variables d'environnement
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+# Dépendances système
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ffmpeg \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Répertoire de travail
+WORKDIR /app
+
+# Installation des dépendances Python (cache Docker)
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copie du code source
+COPY config/ ./config/
+COPY security/ ./security/
+COPY asterisk/ ./asterisk/
+COPY tools/ ./tools/
+COPY server.py .
+COPY run_server_with_token.sh .
+
+# Création des dossiers de travail
+RUN mkdir -p /app/logs /app/schemas
+
+# Point d'entrée : lance le serveur MCP en stdio
+CMD ["python3", "server.py"]

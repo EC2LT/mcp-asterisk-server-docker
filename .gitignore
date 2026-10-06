@@ -1,12 +1,36 @@
+# Python
 venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Environnement
 .env
+
+# Logs et données
 logs/*.log
 schemas/*.json
-models/*.onnx
 *.wav
 *.raw
+
+# Modèles (trop volumineux pour Git)
+models/*.onnx
+models/*.onnx.json
+
+# Tests SIPp
 sipp_*.csv
 sipp_*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Docker
+*.pid

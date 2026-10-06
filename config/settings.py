@@ -6,21 +6,18 @@ load_dotenv()
 
 
 class Settings:
-    # Asterisk ARI
-    ARI_URL = os.getenv("ARI_URL", "http://localhost:8088/ari")
-    ARI_WS_URL = os.getenv("ARI_WS_URL", "ws://localhost:8088/ari/events")
+    # Asterisk (URLs construites depuis ASTERISK_HOST)
+    ASTERISK_HOST = os.getenv("ASTERISK_HOST", "localhost")
+    ARI_PORT = os.getenv("ASTERISK_ARI_PORT", "8088")
+    ARI_URL = os.getenv("ARI_URL", f"http://{ASTERISK_HOST}:{ARI_PORT}/ari")
+    ARI_WS_URL = os.getenv("ARI_WS_URL", f"ws://{ASTERISK_HOST}:{ARI_PORT}/ari/events")
     ARI_USER = os.getenv("ARI_USER", "mcp_user")
     ARI_PASSWORD = os.getenv("ARI_PASSWORD", "mcp_secret_password")
     ARI_APP = os.getenv("ARI_APP", "asterisk-vocal-ai")
 
-    # AMI
-    AMI_HOST = os.getenv("AMI_HOST", "127.0.0.1")
-    AMI_PORT = int(os.getenv("AMI_PORT", "5038"))
-    AMI_USER = os.getenv("AMI_USER", "mcp_ami_user")
-    AMI_PASSWORD = os.getenv("AMI_PASSWORD", "ami_secret_password")
-
     # CDR
     CDR_DB_HOST = os.getenv("CDR_DB_HOST", "localhost")
+    CDR_DB_PORT = int(os.getenv("CDR_DB_PORT", "3306"))
     CDR_DB_USER = os.getenv("CDR_DB_USER", "asterisk")
     CDR_DB_PASSWORD = os.getenv("CDR_DB_PASSWORD", "asterisk")
     CDR_DB_NAME = os.getenv("CDR_DB_NAME", "asterisk")
@@ -31,16 +28,18 @@ class Settings:
     KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "mcp-agent")
 
     # Ollama
+    OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
     OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 
     # S2S
-    UDP_IP = os.getenv("UDP_IP", "127.0.0.1")
+    UDP_IP = os.getenv("UDP_IP", "0.0.0.0")
     UDP_PORT = int(os.getenv("UDP_PORT", "5088"))
     PIPER_MODEL = os.getenv("PIPER_MODEL", "./models/fr_FR-siwis-medium.onnx")
     WHISPER_MODEL = os.getenv("WHISPER_MODEL", "small")
 
-    # Dev
-    MCP_ROLE = os.getenv("MCP_ROLE", "admin")
+    # Compte de service vocal
+    VOCAL_USERNAME = os.getenv("VOCAL_USERNAME", "vocal-agent")
+    VOCAL_PASSWORD = os.getenv("VOCAL_PASSWORD", "password")
 
     @property
     def ari_auth(self):

@@ -4,6 +4,7 @@ import getpass
 import json
 import os
 import logging
+import sys
 from datetime import datetime
 
 import ollama
@@ -46,9 +47,9 @@ async def main():
     token, roles = authenticate()
 
     server_params = StdioServerParameters(
-        command=os.path.join(os.path.dirname(__file__), "venv", "bin", "python3"),
-        args=[os.path.join(os.path.dirname(__file__), "server.py")],
-        env={**os.environ, "MCP_AUTH_TOKEN": token},
+	command=sys.executable,
+	args=[os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.py")],
+	env={**os.environ, "MCP_AUTH_TOKEN": token},
     )
 
     async with stdio_client(server_params) as (read, write):

@@ -7,7 +7,7 @@ PASSWORD="${2:-password}"
 
 echo "🔐 Récupération du token pour $USERNAME..."
 
-RESPONSE=$(curl -s -X POST http://localhost:8090/realms/mcp-asterisk/protocol/openid-connect/token \
+RESPONSE=$(curl -s -X POST http://keycloak:8090/realms/mcp-asterisk/protocol/openid-connect/token \
   -d "grant_type=password" \
   -d "client_id=mcp-agent" \
   -d "username=$USERNAME" \

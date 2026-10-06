@@ -1,0 +1,8 @@
+# Dockerfile.keycloak
+FROM quay.io/keycloak/keycloak:25.0.0
+
+# Copie du realm pré-configuré
+COPY keycloak/realm-mcp-asterisk.json /opt/keycloak/data/import/
+
+# Import automatique au démarrage
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm"]

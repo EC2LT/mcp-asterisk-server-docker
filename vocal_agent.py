@@ -10,6 +10,7 @@ import aiohttp
 import websockets
 import ollama
 import requests
+import sys
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -115,9 +116,9 @@ async def init_mcp_session():
     _write_token_file()
 
     server_params = StdioServerParameters(
-        command=os.path.join(os.path.dirname(__file__), "venv", "bin", "python3"),
-        args=[os.path.join(os.path.dirname(__file__), "server.py")],
-        env={**os.environ},
+	command=sys.executable,  # ← Python actuel (fonctionne partout)
+	args=[os.path.join(os.path.dirname(os.path.abspath(__file__)), "server.py")],
+	env={**os.environ},
     )
 
     _mcp_cm_read = stdio_client(server_params)

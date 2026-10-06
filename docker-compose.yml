@@ -1,0 +1,133 @@
+# docker-compose.yml
+services:
+  # ============================================================
+  # KEYCLOAK : Serveur d'authentification (OIDC/JWT)
+  # ============================================================
+  keycloak:
+    build:
+      context: .
+      dockerfile: Dockerfile.keycloak
+    container_name: mcp-keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HTTP_PORT: 8090
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_PROXY: edge
+    ports:
+      - "8090:8090"
+    networks:
+      - mcp-net
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8090 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  # ============================================================
+  # OLLAMA : LLM local
+  # ============================================================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: mcp-ollama
+    restart: unless-stopped
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - mcp-net
+    # Décommenter si vous avez un GPU NVIDIA
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  # ============================================================
+  # INIT OLLAMA : Télécharge le modèle qwen2.5:3b au démarrage
+  # ============================================================
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: mcp-ollama-init
+    depends_on:
+      - ollama
+    entrypoint: >
+      sh -c "
+        sleep 10 &&
+        OLLAMA_HOST=http://ollama:11434 ollama pull qwen2.5:3b &&
+        echo 'Modèle qwen2.5:3b téléchargé.'
+      "
+    networks:
+      - mcp-net
+    restart: "no"
+
+  # ============================================================
+  # AGENT VOCAL S2S : Reçoit les appels Asterisk
+  # ============================================================
+  vocal-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.vocal-agent
+    container_name: mcp-vocal-agent
+    restart: unless-stopped
+    extra_hosts:                                    # ← AJOUTER
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    environment:
+      # Asterisk
+      ASTERISK_HOST: ${ASTERISK_HOST}
+      ARI_URL: http://${ASTERISK_HOST}:${ASTERISK_ARI_PORT}/ari
+      ARI_WS_URL: ws://${ASTERISK_HOST}:${ASTERISK_ARI_PORT}/ari/events
+      ARI_USER: ${ASTERISK_ARI_USER}
+      ARI_PASSWORD: ${ASTERISK_ARI_PASSWORD}
+      ARI_APP: ${ASTERISK_ARI_APP}
+      # Keycloak
+      KEYCLOAK_URL: http://keycloak:8090
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
+      # Ollama
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL}
+      # S2S
+      UDP_IP: ${UDP_IP}
+      UDP_PORT: ${UDP_PORT}
+      PIPER_MODEL: ${PIPER_MODEL}
+      WHISPER_MODEL: ${WHISPER_MODEL}
+      # Compte de service
+      VOCAL_USERNAME: ${VOCAL_USERNAME}
+      VOCAL_PASSWORD: ${VOCAL_PASSWORD}
+    ports:
+      # UDP pour l'audio Asterisk → agent vocal
+      - "${UDP_PORT}:${UDP_PORT}/udp"
+    volumes:
+      - ./models:/app/models:ro
+      - ./logs:/app/logs
+      - token-share:/tmp
+    networks:
+      - mcp-net
+
+# ============================================================
+# VOLUMES
+# ============================================================
+volumes:
+  ollama-data:
+    driver: local
+  token-share:
+    driver: local
+
+# ============================================================
+# RÉSEAU
+# ============================================================
+networks:
+  mcp-net:
+    driver: bridge

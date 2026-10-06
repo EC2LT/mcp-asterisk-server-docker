@@ -1,0 +1,44 @@
+# Dockerfile.vocal-agent
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+# Dépendances système : ffmpeg (audio), piper (TTS), build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    jq \
+    ffmpeg \
+    espeak-ng \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Installation des dépendances Python
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Installation de Piper (binaire)
+RUN curl -L https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz \
+    | tar xz -C /usr/local/bin --strip-components=1
+
+# Copie du code source
+COPY config/ ./config/
+COPY security/ ./security/
+COPY asterisk/ ./asterisk/
+COPY tools/ ./tools/
+COPY s2s/ ./s2s/
+COPY models/ ./models/
+COPY server.py .
+COPY vocal_agent.py .
+COPY run_vocal_with_token.sh .
+COPY run_server_with_token.sh .
+COPY agent.py .
+
+RUN mkdir -p /app/logs
+
+# Point d'entrée : lance l'agent vocal via le wrapper
+CMD ["./run_vocal_with_token.sh", "vocal-agent", "password"]
