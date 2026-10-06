@@ -11,6 +11,15 @@ Système de supervision et de pilotage intelligent d'un serveur **Asterisk 22 LT
 - **Sécurité** : Keycloak (OIDC/JWT) + RBAC (admin, supervisor, operator)
 - **LLM 100 % local** : Ollama + Qwen 2.5, Whisper, Piper
 
+  ## 📚 Documentation
+
+| Document | Description |
+|---|---|
+| [docs/01-asterisk-setup.md](docs/01-asterisk-setup.md) | Configuration d'Asterisk |
+| [docs/02-keycloak-setup.md](docs/02-keycloak-setup.md) | Configuration de Keycloak |
+| [docs/03-mcp-server.md](docs/03-mcp-server.md) | Documentation du serveur MCP |
+| [docs/04-vocal-agent.md](docs/04-vocal-agent.md) | Documentation de l'agent vocal |
+
 ## 📋 Prérequis
 
 - **Docker** ≥ 24 et **Docker Compose** ≥ 2.20
@@ -69,16 +78,6 @@ mcp-ollama        Up
 mcp-vocal-agent   Up
 ```
 
-### 7. Utiliser
-
-**Agent texte** :
-```bash
-docker compose exec vocal-agent python3 agent.py
-# Login : alice / password
-```
-
-**Agent vocal** : composez le **2000** depuis un softphone (Linphone, Zoiper).
-
 ## 🔐 Comptes par défaut
 
 | Utilisateur | Mot de passe | Rôle |
@@ -89,6 +88,19 @@ docker compose exec vocal-agent python3 agent.py
 | `vocal-agent` | `password` | operator (service) |
 
 ⚠️ **Changez ces mots de passe en production.**
+
+Configuration a faire sur l'interface de Keycloak : [docs/02-keycloak-setup.md](docs/02-keycloak-setup.md)
+
+
+### 7. Utiliser
+
+**Agent texte** :
+```bash
+docker compose exec vocal-agent python3 agent.py
+# Login : alice / password
+```
+
+**Agent vocal** : composez le **2000** depuis un softphone (Linphone, Zoiper).
 
 ## 🛠️ Commandes utiles
 
@@ -109,15 +121,6 @@ docker compose down -v
 docker compose build --no-cache vocal-agent
 docker compose up -d
 ```
-
-## 📚 Documentation
-
-| Document | Description |
-|---|---|
-| [docs/01-asterisk-setup.md](docs/01-asterisk-setup.md) | Configuration d'Asterisk |
-| [docs/02-keycloak-setup.md](docs/02-keycloak-setup.md) | Configuration de Keycloak |
-| [docs/03-mcp-server.md](docs/03-mcp-server.md) | Documentation du serveur MCP |
-| [docs/04-vocal-agent.md](docs/04-vocal-agent.md) | Documentation de l'agent vocal |
 
 ## 🏗️ Architecture
 
@@ -142,4 +145,3 @@ docker compose up -d
 │  └────────────────────┘                  │
 └──────────────────────────────────────────┘
 ```
-et MCP Asterisk Supervisor
