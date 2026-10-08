@@ -57,8 +57,6 @@ nano .env
 docker compose build
 ```
 
-> ⏱️ Une seule fois (5-10 min).
-
 ### 5. Démarrer
 
 ```bash
